@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  node1:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: "test"
+      RABBITMQ_DEFAULT_PASS: "123"
+    ports:
+      - 5672:5672
+      - 15672:15672
+#    volumes:
+#      - .node1/data/:/var/lib/rabbitmq/
+#      - .node1/log/:/var/log/rabbitmq
+
+  node2:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: "test"
+      RABBITMQ_DEFAULT_PASS: "123"
+    ports:
+      - 5673:5672
+      - 15673:15672
+#    volumes:
+#      - .node2/data/:/var/lib/rabbitmq/
+#      - .node2/log/:/var/log/rabbitmq
+
