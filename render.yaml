@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: music-frontend
+    runtime: image
+    repo: https://github.com/timmmGZ/web
+    plan: free
+    dockerCommand: ./start_all_services.sh
