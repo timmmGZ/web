@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:3000
+    volumes:
+      - ./app:/app
+    environment:
+      #windows doesn't auto-reload app after editing any file, if using react-scripts > 5.x.x,
+      #use WATCHPACK_POLLING, else CHOKIDAR_USEPOLLING to enable auto-reload
+      WATCHPACK_POLLING: 'true'
+      WDS_SOCKET_PORT: 80
+    extra_hosts:
+      #"host.docker.internal" only works for Mac and Windows. In Linux, it is not able to connect
+      #to the docker host from containers, we have to manually add extra_hosts for each container.
+      #This step is not necessary for Mac and Windows.
+      - "host.docker.internal:host-gateway"

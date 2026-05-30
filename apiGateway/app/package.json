@@ -1,0 +1,15 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "API Gateway",
+  "main": "server.js",
+  "scripts": {
+    "_comment": "In some networked environments (such as a container running nodemon reading across a mounted drive), you will need to use the legacyWatch: true which enables Chokidar's polling.\n",
+    "start": "nodemon server.js -L"
+  },
+  "author": "Tim",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20",
+    "request-promise": "^4.2.6"
+  }}

@@ -1,0 +1,65 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - /bin/bash
+      - -c
+      - |
+        chmod +x wait_for_init.sh
+        ./wait_for_init.sh Backend
+        python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8001:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+    extra_hosts:
+      #"host.docker.internal" only works for Mac and Windows. In Linux, it is not able to connect
+      #to the docker host from containers, we have to manually add extra_hosts for each container.
+      #This step is not necessary for Mac and Windows.
+      - "host.docker.internal:host-gateway"
+
+  message_queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # restart: always
+    command:
+      - /bin/bash
+      - -c
+      - |
+        ./wait_for_init.sh RabbitMQ
+        python mq_consumer.py
+    volumes:
+      - .:/app
+    depends_on:
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  database:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: music
+      MYSQL_USER: test
+      MYSQL_PASSWORD: 123
+      MYSQL_ROOT_PASSWORD: root123456
+    volumes:
+      - .mysql:/var/lib/mysql
+    ports:
+      - 33061:3306
+#    healthcheck:
+#      #'mysqladmin ping' starts pinging before MySQL init process is done. Therefore, if it is
+#      #our first time "docker-compose-up", it starts pinging even when the root user is not
+#      #created (it needs time for init the first time). Ping always returns a false positive no
+#      #matter if the command succeeds or not, so we have to match the output by 'grep' else return
+#      #false by 'exit 1'. Then the backend will start only while receiving 'mysql is alive'
+#      test: out=$$(mysqladmin ping --password=root123456); echo $$out | grep 'alive' ||exit 1;
+#      interval: 100ms
+#      timeout: 1s
+#      retries: 300
